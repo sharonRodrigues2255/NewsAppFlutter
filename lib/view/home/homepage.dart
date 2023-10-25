@@ -3,14 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:news_app/controller/homepage_controller.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    Provider.of<HomepageController>(context, listen: false).fetchdatacarousal();
+    Provider.of<HomepageController>(context, listen: false)
+        .fetchdatacategories();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<HomepageController>(context);
-    provider.fetchdatacarousal();
-    provider.fetchdatacategories();
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -41,7 +52,7 @@ class HomePage extends StatelessWidget {
                 if (!provider.headlinesisLoading)
                   CarouselSlider(
                     items: List.generate(
-                        provider.headlinesdata?.articles?.length ?? 0,
+                        10,
                         (index) => Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
@@ -146,7 +157,7 @@ class HomePage extends StatelessWidget {
                         padding: EdgeInsets.all(5.0),
                         child: InkWell(
                           onTap: () {
-                            provider.categoriesIndex = index;
+                            provider.setCategories(index);
                             print(provider.categoriesIndex);
                           },
                           child: Container(
@@ -169,8 +180,7 @@ class HomePage extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount:
-                        provider.catogoriesContents?.articles?.length ?? 0,
+                    itemCount: 10,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(

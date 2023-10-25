@@ -7,10 +7,8 @@ import 'package:http/http.dart' as http;
 class HomepageController extends ChangeNotifier {
 // topheadlines carousal
 
-  bool headlinesisLoading = false;
+  bool headlinesisLoading = true;
   NewsModel? headlinesdata;
-  var caurouselurl = Uri.parse(
-      "https://newsapi.org/v2/top-headlines?country=in&apiKey=a20461708c1a46d7a14cd2216be1f6b0");
 
   onRefrsh() {
     headlinesisLoading = false;
@@ -22,14 +20,26 @@ class HomepageController extends ChangeNotifier {
   }
 
   fetchdatacarousal() async {
+    var caurouselurl = Uri.parse(
+        "https://newsapi.org/v2/top-headlines?country=in&apiKey=a20461708c1a46d7a14cd2216be1f6b0");
     final response = await http.get(caurouselurl);
     if (response.statusCode == 200) {
       headlinesdata = NewsModel.fromJson(jsonDecode(response.body));
     }
+
+    headlinesisLoading = false;
+    notifyListeners();
   }
 
   int categoriesIndex = 0;
-  bool categoriesLoading = false;
+
+  void setCategories(int index) {
+    categoriesIndex = index;
+    notifyListeners();
+    fetchdatacategories();
+  }
+
+  bool categoriesLoading = true;
 
   NewsModel? catogoriesContents;
 
@@ -57,6 +67,9 @@ class HomepageController extends ChangeNotifier {
       catogoriesContents = NewsModel.fromJson(jsonDecode(response.body));
       print(catogoriesContents?.articles?[0].urlToImage);
     }
+
+    categoriesLoading = false;
+    notifyListeners();
   }
 }
 
