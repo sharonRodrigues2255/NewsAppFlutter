@@ -1,7 +1,9 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/controller/homepage_controller.dart';
+import 'package:news_app/utils/colors.dart';
 import 'package:news_app/view/home/widgets/carousel_widget.dart';
+import 'package:news_app/view/home/widgets/category_news.dart';
+import 'package:news_app/view/home/widgets/horizondal_scrolling_cate.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,13 +16,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 2), () {
-      Provider.of<HomepageController>(context, listen: false)
-          .fetchdatacarousal();
-      Provider.of<HomepageController>(context, listen: false)
-          .fetchdatacategories();
-    });
-
+    final provider = Provider.of<HomepageController>(context, listen: false);
+    if (provider.headlinesdata == null && provider.catogoriesContents == null) {
+      Future.delayed(Duration(seconds: 1), () {
+        Provider.of<HomepageController>(context, listen: false)
+            .fetchdatacarousal();
+        Provider.of<HomepageController>(context, listen: false)
+            .fetchdatacategories();
+      });
+    }
     super.initState();
   }
 
@@ -31,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Color(0xFF362626),
+        backgroundColor: appbarColor,
         title: Text("Newz App"),
       ),
       body: Padding(
@@ -57,134 +61,21 @@ class _HomePageState extends State<HomePage> {
                 if (!provider.headlinesisLoading)
                   CarouselWidget(provider: provider)
                 else
-                  SizedBox(
+                  const SizedBox(
                       height: 49,
                       child: Center(child: CircularProgressIndicator())),
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
-                  child: Container(
-                    height: 40,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF432A2A),
-                    ),
-                    child: const Row(
-                      children: [
-                        SizedBox(
-                          width: 30,
-                        ),
-                        Icon(
-                          Icons.search,
-                          size: 23,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Search",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 15),
-                Text(
-                  "Categories",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.grey,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Container(
+                const SizedBox(height: 15),
+                SizedBox(
                   height: 45,
                   width: double.infinity,
-                  child: ListView.builder(
-                    itemCount: categories.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: InkWell(
-                          onTap: () {
-                            provider.setCategories(index);
-                            print(provider.categoriesIndex);
-                            provider.fetchdatacategories();
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: index == provider.categoriesIndex
-                                  ? Colors.redAccent
-                                  : Colors.grey,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            width: 100,
-                            height: 40,
-                            child: Center(child: Text(categories[index])),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                  child: HorizondalScrollingCategory(provider: provider),
                 ),
                 if (!provider.categoriesLoading)
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 5),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 15, right: 14, top: 15),
-                                child: Container(
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(provider
-                                                  .catogoriesContents
-                                                  ?.articles?[index]
-                                                  .urlToImage ??
-                                              "https://bitsofco.de/img/Qo5mfYDE5v-350.png"))),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                height: 130,
-                                width: double.infinity,
-                                child: Text(
-                                  provider.catogoriesContents?.articles?[index]
-                                          .title ??
-                                      "nothing",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  )
+                  CategoryNews(provider: provider)
                 else
-                  Center(child: CircularProgressIndicator()),
+                  SizedBox(
+                      height: 250,
+                      child: Center(child: CircularProgressIndicator())),
               ],
             ),
           ),
