@@ -16,6 +16,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<SearchController>(
+            create: (context) => SearchController()),
         ChangeNotifierProvider<HomepageController>(
             create: (context) => HomepageController())
       ],
