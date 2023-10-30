@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/controller/homepage_controller.dart';
+import 'package:news_app/view/home/widgets/carousel_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,9 +14,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    Provider.of<HomepageController>(context, listen: false).fetchdatacarousal();
-    Provider.of<HomepageController>(context, listen: false)
-        .fetchdatacategories();
+    Future.delayed(Duration(seconds: 2), () {
+      Provider.of<HomepageController>(context, listen: false)
+          .fetchdatacarousal();
+      Provider.of<HomepageController>(context, listen: false)
+          .fetchdatacategories();
+    });
+
     super.initState();
   }
 
@@ -38,8 +43,8 @@ class _HomePageState extends State<HomePage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: Text(
                     "Top Headlines",
                     style: TextStyle(
@@ -50,60 +55,11 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 if (!provider.headlinesisLoading)
-                  CarouselSlider(
-                    items: List.generate(
-                        10,
-                        (index) => Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    height: 170,
-                                    width:
-                                        MediaQuery.of(context).size.width - 30,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(
-                                          provider
-                                                  .headlinesdata
-                                                  ?.articles?[index]
-                                                  .urlToImage ??
-                                              "https://bitsofco.de/img/Qo5mfYDE5v-350.png",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 50,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(7.0),
-                                      child: Text(
-                                        provider.headlinesdata?.articles?[index]
-                                                .title ??
-                                            "No data",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
-                    options: CarouselOptions(
-                      height: 240,
-                      aspectRatio: 4 / 8,
-                      autoPlay: false,
-                      autoPlayInterval: Duration(seconds: 4),
-                    ),
-                  )
+                  CarouselWidget(provider: provider)
                 else
-                  Center(child: CircularProgressIndicator()),
+                  SizedBox(
+                      height: 49,
+                      child: Center(child: CircularProgressIndicator())),
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -159,6 +115,7 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             provider.setCategories(index);
                             print(provider.categoriesIndex);
+                            provider.fetchdatacategories();
                           },
                           child: Container(
                             decoration: BoxDecoration(

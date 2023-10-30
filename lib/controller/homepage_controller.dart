@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:news_app/model/news_model.dart';
 import 'package:http/http.dart' as http;
 
-class HomepageController extends ChangeNotifier {
+class HomepageController with ChangeNotifier {
 // topheadlines carousal
 
-  bool headlinesisLoading = true;
+  bool headlinesisLoading = false;
   NewsModel? headlinesdata;
 
   onRefrsh() {
@@ -20,6 +20,8 @@ class HomepageController extends ChangeNotifier {
   }
 
   fetchdatacarousal() async {
+    headlinesisLoading = true;
+    notifyListeners();
     var caurouselurl = Uri.parse(
         "https://newsapi.org/v2/top-headlines?country=in&apiKey=a20461708c1a46d7a14cd2216be1f6b0");
     final response = await http.get(caurouselurl);
@@ -39,11 +41,13 @@ class HomepageController extends ChangeNotifier {
     fetchdatacategories();
   }
 
-  bool categoriesLoading = true;
+  bool categoriesLoading = false;
 
   NewsModel? catogoriesContents;
 
   fetchdatacategories() async {
+    categoriesLoading = true;
+    notifyListeners();
     String category;
     if (categoriesIndex == 0) {
       category = general;
