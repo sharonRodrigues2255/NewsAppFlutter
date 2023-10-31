@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/controller/homepage_controller.dart';
+import 'package:news_app/controller/search_controller.dart';
 import 'package:news_app/view/bottom_navigation/bottom_navigation.dart';
-import 'package:news_app/view/home/homepage.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<SearchController>(
-            create: (context) => SearchController()),
+        ChangeNotifierProvider<SearchControllerProvider>(
+            create: (context) => SearchControllerProvider()),
         ChangeNotifierProvider<HomepageController>(
             create: (context) => HomepageController())
       ],
