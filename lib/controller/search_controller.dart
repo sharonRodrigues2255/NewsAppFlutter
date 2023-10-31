@@ -17,7 +17,6 @@ class SearchControllerProvider with ChangeNotifier {
         "${ApiEndPoints.baseUrl}${ApiEndPoints.searchQueryUrl(search: search)}${MyApi.apiKey}");
     final response = await http.get(url);
     if (response.statusCode == 200) {
-      print(url);
       searchDData = NewsModel.fromJson(jsonDecode(response.body));
     }
     isLoading = false;

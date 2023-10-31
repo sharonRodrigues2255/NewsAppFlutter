@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/controller/search_controller.dart';
 import 'package:news_app/utils/colors.dart';
+import 'package:news_app/view/detailed_news/detailed_page.dart';
 import 'package:provider/provider.dart';
 
 TextEditingController searchController = TextEditingController();
@@ -70,42 +71,59 @@ class _SearchScreenState extends State<SearchScreen> {
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    height: 170,
-                                    width:
-                                        MediaQuery.of(context).size.width - 30,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(
+                              child: InkWell(
+                                onTap: () {
+                                  final news =
+                                      provider.searchDData?.articles?[index];
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => DetailedNews(
+                                            title: news?.title ?? "",
+                                            description:
+                                                news?.description ?? "",
+                                            imageUrl: news?.urlToImage ?? "",
+                                            author: news?.author ?? "",
+                                            source: news?.content ?? "",
+                                          )));
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 170,
+                                      width: MediaQuery.of(context).size.width -
+                                          30,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(
+                                            provider
+                                                    .searchDData
+                                                    ?.articles?[index]
+                                                    .urlToImage ??
+                                                "https://bitsofco.de/img/Qo5mfYDE5v-350.png",
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 50,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(7.0),
+                                        child: Text(
                                           provider.searchDData?.articles?[index]
-                                                  .urlToImage ??
-                                              "https://bitsofco.de/img/Qo5mfYDE5v-350.png",
+                                                  .title ??
+                                              "No data",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Container(
-                                    height: 50,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(7.0),
-                                      child: Text(
-                                        provider.searchDData?.articles?[index]
-                                                .title ??
-                                            "No data",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             );
                           })

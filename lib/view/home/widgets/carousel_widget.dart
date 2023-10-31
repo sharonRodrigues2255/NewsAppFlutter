@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/controller/homepage_controller.dart';
+import 'package:news_app/view/detailed_news/detailed_page.dart';
 
 class CarouselWidget extends StatelessWidget {
   const CarouselWidget({
@@ -18,40 +19,53 @@ class CarouselWidget extends StatelessWidget {
           10,
           (index) => Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 170,
-                      width: MediaQuery.of(context).size.width - 30,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                            provider.headlinesdata?.articles?[index]
-                                    .urlToImage ??
-                                "https://bitsofco.de/img/Qo5mfYDE5v-350.png",
+                child: InkWell(
+                  onTap: () {
+                    final news = provider.headlinesdata?.articles?[index];
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => DetailedNews(
+                              title: news?.title ?? "",
+                              description: news?.description ?? "",
+                              imageUrl: news?.urlToImage ?? "",
+                              author: news?.author ?? "",
+                              source: news?.content ?? "",
+                            )));
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 170,
+                        width: MediaQuery.of(context).size.width - 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              provider.headlinesdata?.articles?[index]
+                                      .urlToImage ??
+                                  "https://bitsofco.de/img/Qo5mfYDE5v-350.png",
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Container(
-                      height: 50,
-                      child: Padding(
-                        padding: const EdgeInsets.all(7.0),
-                        child: Text(
-                          provider.headlinesdata?.articles?[index].title ??
-                              "No data",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
+                      Container(
+                        height: 50,
+                        child: Padding(
+                          padding: const EdgeInsets.all(7.0),
+                          child: Text(
+                            provider.headlinesdata?.articles?[index].title ??
+                                "No data",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               )),
       options: CarouselOptions(
